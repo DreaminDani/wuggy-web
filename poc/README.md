@@ -9,6 +9,6 @@ To generate pseudowords using the Wuggy server, you can use the following method
 Run the following command to generate pseudowords via the command line interface:
 
 Run `python main.py --referenceSequence trumpet`
-To change the number of generated words use `--wordLength` like `python main.py --referenceSequence trumpet --wordLength 5`
+To change the number of generated words use `--ncandidates` like `python main.py --referenceSequence trumpet --ncandidates 5`
 
 ### Using the websever (coming soon)

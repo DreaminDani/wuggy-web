@@ -1,6 +1,7 @@
 import os
 import time
 import argparse
+import fractions
 from typing import Dict, Optional
 
 from wuggy import WuggyGenerator
@@ -26,16 +27,16 @@ for language_plugin_name in language_plugins_to_load:
 print(
     f"Starting Wuggy server with the following loaded language plugins: {wuggy_generators.keys()}")
 
-def generate_simple_cli(reference_sequence: str, language_plugin: str = "orthographic_english", word_length: int = 10):
+def generate_simple_cli(reference_sequence: str, language_plugin: str = "orthographic_english", ncandidates: int = 10):
     """
-    Example usage: python main.py --referenceSequence trumpet --wordLength 5
+    Example usage: python main.py --referenceSequence trumpet --ncandidates 5
     """
     if language_plugin in wuggy_generators:
         wuggy_generator = wuggy_generators[language_plugin]
         pseudowords = []
         # for sequence in wuggy_generator.generate_classic([reference_sequence]):
         for sequence in wuggy_generator.generate_classic([reference_sequence],
-    ncandidates_per_sequence=word_length, max_search_time_per_sequence=25):
+    ncandidates_per_sequence=ncandidates, max_search_time_per_sequence=25, match_letter_length=True, subsyllabic_segment_overlap_ratio=fractions.Fraction(2, 3)):
             pseudowords.append(sequence["pseudoword"])
         return { "word": reference_sequence, "matches": pseudowords }
     else:
@@ -46,10 +47,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate pseudowords using Wuggy.")
     parser.add_argument("--referenceSequence", type=str, required=True, help="The reference sequence to generate pseudowords for.")
     parser.add_argument("--languagePlugin", type=str, default="orthographic_english", help="The language plugin to use.")
-    parser.add_argument("--wordLength", type=int, default=10, help="The desired number of pseudowords to generate.")
+    parser.add_argument("--ncandidates", type=int, default=10, help="The desired number of pseudowords to generate.")
     
     args = parser.parse_args()
     
-    result = generate_simple_cli(args.referenceSequence, args.languagePlugin, args.wordLength)
+    result = generate_simple_cli(args.referenceSequence, args.languagePlugin, args.ncandidates)
     if result:
         print(result)
